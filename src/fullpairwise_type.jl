@@ -57,12 +57,15 @@ mutable struct FullPairwise <: AbstractPairwiseParameter
 		if m < 1
 			error("FullPairwise: count must be positive")
 		end
+		vv1 = Vector{Int64}(undef, ne(g))
+		vv2 = Vector{Int64}(undef, ne(g))
 		i = 1
-		Λ = sparse(zeros(nv(g),nv(g)))
 		for e in edges(g)
-			Λ[e.src,e.dst] = Λ[e.dst,e.src] = lam[i]
+			vv1[i] = e.src
+			vv2[i] = e.dst
 			i += 1
 		end
+		Λ = sparse([vv1; vv2], [vv2; vv1], [lam; lam], nv(g), nv(g))
 		new(lam, g, m, Λ)
 	end
 end
